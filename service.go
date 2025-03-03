@@ -11,12 +11,12 @@ type MethodType struct {
 	method    reflect.Method // 方法本身
 	ArgType   reflect.Type   // args
 	ReplyType reflect.Type   // rpy
-	numsCalls uint32         // 调用次数
+	numsCalls uint64         // 调用次数
 }
 
 // NumsCalls 获取调用次数
-func (m *MethodType) NumsCalls() uint32 {
-	return m.numsCalls
+func (m *MethodType) NumsCalls() uint64 {
+	return atomic.LoadUint64(&m.numsCalls)
 }
 
 func (m *MethodType) newArgs() reflect.Value {
@@ -33,26 +33,26 @@ func (m *MethodType) newArgs() reflect.Value {
 }
 
 func (m *MethodType) newReply() reflect.Value {
-	//// reply必须是个指针
-	//reply := reflect.New(m.ReplyType.Elem())
-	//// 指针通过Elem.Kind()拿到指向元素的类型
-	//switch m.ReplyType.Elem().Kind() {
-	//case reflect.Slice:
-	//	// 将指针指向的值设置为空 Slice
-	//	reply.Elem().Set(reflect.MakeSlice(m.ReplyType.Elem(), 0, 0))
-	//case reflect.Map:
-	//	reply.Elem().Set(reflect.MakeMap(m.ReplyType.Elem()))
-	//}
-	//return reply
-
-	var reply reflect.Value
+	// reply必须是个指针
+	reply := reflect.New(m.ReplyType.Elem())
+	// 指针通过Elem.Kind()拿到指向元素的类型
 	switch m.ReplyType.Elem().Kind() {
-	case reflect.Map:
-		reply = reflect.MakeMap(m.ReplyType.Elem())
 	case reflect.Slice:
-		reply = reflect.MakeSlice(m.ReplyType.Elem(), 0, 0)
+		// 将指针指向的值设置为空 Slice
+		reply.Elem().Set(reflect.MakeSlice(m.ReplyType.Elem(), 0, 0))
+	case reflect.Map:
+		reply.Elem().Set(reflect.MakeMap(m.ReplyType.Elem()))
 	}
 	return reply
+
+	//var reply reflect.Value
+	//switch m.ReplyType.Elem().Kind() {
+	//case reflect.Map:
+	//	reply = reflect.MakeMap(m.ReplyType.Elem())
+	//case reflect.Slice:
+	//	reply = reflect.MakeSlice(m.ReplyType.Elem(), 0, 0)
+	//}
+	//return reply
 }
 
 type Service struct {
@@ -93,7 +93,7 @@ func (s *Service) registerMethods() {
 			continue
 		}
 		argType, replyType := mTyp.In(1), mTyp.In(2)
-		if isExportedOrBuiltinType(argType) || !isExportedOrBuiltinType(replyType) {
+		if !isExportedOrBuiltinType(argType) || !isExportedOrBuiltinType(replyType) {
 			// 参数必须是导出类型或者内置类型
 			continue
 		}
@@ -107,7 +107,7 @@ func (s *Service) registerMethods() {
 }
 
 func (s *Service) call(m *MethodType, args, reply reflect.Value) error {
-	atomic.AddUint32(&m.numsCalls, 1) // 原子性
+	atomic.AddUint64(&m.numsCalls, 1) // 原子性
 	f := m.method.Func
 	returnValues := f.Call([]reflect.Value{s.rcvr, args, reply})
 	if errInter := returnValues[0].Interface(); errInter != nil {
