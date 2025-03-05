@@ -19,11 +19,13 @@ var _ Codec = (*JsonCodec)(nil)
 
 func NewJsonCodec(conn io.ReadWriteCloser) Codec {
 	buf := bufio.NewWriter(conn)
+	dec := json.NewDecoder(conn)
+	enc := json.NewEncoder(buf)
 	return &JsonCodec{
 		conn: conn,
 		buf:  buf,
-		dec:  json.NewDecoder(conn),
-		enc:  json.NewEncoder(buf),
+		dec:  dec,
+		enc:  enc,
 	}
 }
 

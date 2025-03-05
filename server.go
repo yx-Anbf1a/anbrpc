@@ -16,21 +16,37 @@ import (
 
 type Server struct {
 	ServerMap sync.Map // 保证并发安全
+	register  *ServiceRegister
 }
 
-func NewServer(addr string) *Server {
-	return &Server{}
+func NewServer() *Server {
+	s := &Server{}
+	return s
 }
 
-var DefaultServer = NewServer("")
+var DefaultServer = NewServer()
 
-func Accept(conn net.Listener) {
-	DefaultServer.Accept(conn)
+func Accept(lis net.Listener) {
+	DefaultServer.Accept(lis)
 }
 
-func (s *Server) Accept(conn net.Listener) {
+func WithRegister(register *ServiceRegister) {
+	DefaultServer.WithRegister(register)
+}
+
+func (s *Server) WithRegister(register *ServiceRegister) {
+	s.register = register
+}
+
+func (s *Server) Accept(lis net.Listener) {
+	if s.register == nil {
+		log.Println("register is nil")
+		return
+	}
+	go s.register.ListenLeaseRespChan()
+	//defer s.register.Close()
 	for {
-		conn, err := conn.Accept()
+		conn, err := lis.Accept()
 		if err != nil {
 			log.Fatal("accept error:", err)
 			return
@@ -62,7 +78,7 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 		log.Printf("invalid codec type %s", opt.CodecType)
 		return
 	}
-	go s.ServeCodec(f(conn), &opt)
+	s.ServeCodec(f(conn), &opt)
 }
 
 var invalidRequest = struct{}{}
@@ -96,6 +112,7 @@ type request struct {
 }
 
 func (s *Server) readRequest(cc codec.Codec) (*request, error) {
+
 	h, err := s.readRequestHeader(cc)
 	if err != nil {
 		return nil, err
@@ -115,7 +132,7 @@ func (s *Server) readRequest(cc codec.Codec) (*request, error) {
 	if req.argv.Kind() != reflect.Ptr {
 		argvi = req.argv.Addr().Interface()
 	}
-	if err := cc.ReadBody(argvi); err != nil {
+	if err = cc.ReadBody(argvi); err != nil {
 		log.Println("read body error:", err)
 		return nil, err
 	}
@@ -124,12 +141,14 @@ func (s *Server) readRequest(cc codec.Codec) (*request, error) {
 
 func (s *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
 	var h codec.Header
+
 	if err := cc.ReadHeader(&h); err != nil {
 		if err != io.EOF && err != io.ErrUnexpectedEOF {
 			log.Println("read header error:", err)
 		}
 		return nil, err
 	}
+
 	return &h, nil
 }
 
@@ -169,8 +188,8 @@ func (s *Server) handleRequest(cc codec.Codec, req *request, sending *sync.Mutex
 	called := make(chan struct{}, 1)
 	sent := make(chan struct{}, 1)
 	go func() {
-		called <- struct{}{}
 		err := req.svc.call(req.mtype, req.argv, req.replyv)
+		called <- struct{}{}
 		if err != nil {
 			req.h.Error = err.Error()
 			s.sendResponse(cc, req.h, invalidRequest, sending)
@@ -212,6 +231,12 @@ const (
 	defaultRPCPath   = "/_geeprc_"
 	defaultDebugPath = "/debug/geerpc"
 )
+
+func (server *Server) HandleHTTP() {
+	http.Handle(defaultRPCPath, server)
+	http.Handle(defaultDebugPath, debugHTTP{server})
+	log.Println("rpc server debug path:", defaultDebugPath)
+}
 
 // ServeHTTP implements an http.Handler that answers RPC requests.
 func (server *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {

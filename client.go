@@ -33,7 +33,7 @@ type Client struct {
 	cc       codec.Codec // 客户端编解码器
 	opt      *Option
 	sending  sync.Mutex       // 保证请求并发安全
-	header   *codec.Header    // 请求头
+	header   codec.Header     // 请求头
 	mu       sync.Mutex       // 自己并发操作安全
 	seq      uint64           // 客户端序列号
 	pending  map[uint64]*Call // 存储已经发送但未完成的请求
@@ -102,7 +102,7 @@ func (c *Client) TerminateCalls(err error) {
 
 func (c *Client) receive() {
 	var err error
-	for err != nil {
+	for err == nil {
 		var h codec.Header
 		if err = c.cc.ReadHeader(&h); err != nil {
 			break
@@ -129,8 +129,8 @@ func (c *Client) receive() {
 }
 
 func (c *Client) send(call *Call) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.sending.Lock()
+	defer c.sending.Unlock()
 	if c.shutdown || c.closing {
 		return
 	}
@@ -144,17 +144,19 @@ func (c *Client) send(call *Call) {
 	c.header.ServiceMethod = call.ServiceMethod
 	c.header.Seq = call.Seq
 	c.header.Error = ""
-	if err = c.cc.Write(c.header, call.Args); err != nil {
+	if err = c.cc.Write(&c.header, call.Args); err != nil {
 		call := c.RemoveCall(seq)
-		call.Error = errors.New("writing request: " + err.Error())
-		call.done()
+		if call != nil {
+			call.Error = errors.New("writing request: " + err.Error())
+			call.done()
+		}
 	}
 }
 
 func (c *Client) Go(serviceMethod string, args, reply interface{}, done chan *Call) *Call {
 	if done == nil {
 		done = make(chan *Call, 10)
-	} else if cap(done) <= 0 {
+	} else if cap(done) == 0 {
 		panic("rpc client: done has no cap")
 	}
 	call := &Call{
@@ -192,7 +194,7 @@ func dial(f newClientFunc, network, address string, opts ...*Option) (client *Cl
 		return nil, err
 	}
 	defer func() {
-		if err != nil {
+		if err != nil && conn != nil {
 			_ = conn.Close()
 		}
 	}()

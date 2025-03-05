@@ -8,9 +8,9 @@ import (
 
 type Foo int
 
-type Args struct {
-	Num1, Num2 int
-}
+//type Args struct {
+//	Num1, Num2 int
+//}
 
 func (f Foo) Add(args Args, reply *int) error {
 	*reply = args.Num1 + args.Num2

@@ -11,16 +11,14 @@ import (
 
 type BalanceMode int
 
-const (
-	RandomSelect     BalanceMode = iota // 随机
-	RoundRobinSelect                    // 轮训
-)
-
 type Discovery interface {
 	Refresh() error                         // 从注册中心更新服务列表
 	Update(servers map[string]string) error // 手动更新
-	GetService(key string) string           // 根据负载均衡策略，选择一个服务实例
+	GetService() string                     // 根据负载均衡策略，选择一个服务实例
 	GetAllService() []string
+	SetBalancer(balancer Balancer)
+	WatchService(prefix string) error
+	Close() error
 }
 
 type ServerDiscovery struct {
@@ -32,11 +30,14 @@ type ServerDiscovery struct {
 	lastIndex int
 	// etcd 客户端
 	cli *clientv3.Client
-	mu  sync.Mutex
+	// 保证并发安全
+	mu sync.Mutex
+	// 负载均衡器
+	balancer Balancer
 }
 
 // NewServiceDiscovery  新建发现服务
-func NewServiceDiscovery(endpoints []string) *ServerDiscovery {
+func NewServiceDiscovery(endpoints []string, balancer ...Balancer) *ServerDiscovery {
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
@@ -44,9 +45,16 @@ func NewServiceDiscovery(endpoints []string) *ServerDiscovery {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var b Balancer
+	if balancer == nil || len(balancer) == 0 {
+		b = newRoundRobinBalancer()
+	} else {
+		b = balancer[0]
+	}
 	return &ServerDiscovery{
-		cli:     cli,
-		servers: make(map[string]string),
+		cli:      cli,
+		servers:  make(map[string]string),
+		balancer: b,
 	}
 }
 
@@ -111,9 +119,14 @@ func (s *ServerDiscovery) DelServiceList(key string) {
 }
 
 // GetServices 获取服务地址
-func (s *ServerDiscovery) GetService(key string) string {
+func (s *ServerDiscovery) GetService() string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	srvKey := make([]string, 0)
+	for k := range s.servers {
+		srvKey = append(srvKey, k)
+	}
+	key, _ := s.balancer.Pick(srvKey)
 	addr := s.servers[key]
 	return addr
 }
@@ -121,11 +134,14 @@ func (s *ServerDiscovery) GetAllService() []string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	addrs := make([]string, 0)
-
 	for _, v := range s.servers {
 		addrs = append(addrs, v)
 	}
 	return addrs
+}
+
+func (s *ServerDiscovery) SetBalancer(balancer Balancer) {
+	s.balancer = balancer
 }
 
 // Close 关闭服务

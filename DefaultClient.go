@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"io"
+	"log"
 	"sync"
 )
 
 type DClient struct {
-	d       Discovery
-	b       Balancer
-	opt     *Option
-	mu      sync.Mutex
-	clients map[string]*Client
+	discovery Discovery
+	opt       *Option
+	mu        sync.Mutex
+	clients   map[string]*Client
 }
 
 var _ io.Closer = (*DClient)(nil)
@@ -22,35 +22,42 @@ func (dc *DClient) Close() error {
 	for _, client := range dc.clients {
 		_ = client.Close()
 	}
+	_ = dc.discovery.Close()
 	return nil
 }
 
-func newDClient(d Discovery, b Balancer, opt *Option) *DClient {
-	return &DClient{
-		d:       d,
-		b:       b,
-		opt:     opt,
-		clients: make(map[string]*Client),
+func NewDClient(d Discovery, opt *Option) *DClient {
+	dc := &DClient{
+		discovery: d,
+		opt:       opt,
+		clients:   make(map[string]*Client),
 	}
+	return dc
+}
+
+func (dc *DClient) WithBalancer(b Balancer) {
+	dc.discovery.SetBalancer(b)
+	return
 }
 
 func (dc *DClient) dial(rpcAddr string) (*Client, error) {
 	dc.mu.Lock()
 	defer dc.mu.Unlock()
-	client, ok := dc.clients[rpcAddr]
-	if ok && !client.IsAlive() {
-		_ = client.Close()
+	c, ok := dc.clients[rpcAddr]
+	if ok && !c.IsAlive() {
+		_ = c.Close()
 		delete(dc.clients, rpcAddr)
-		client = nil
+		c = nil
 	}
-	if client == nil {
-		client, err := DDial(rpcAddr, dc.opt)
+	if c == nil {
+		var err error
+		c, err = DDial(rpcAddr, dc.opt)
 		if err != nil {
 			return nil, err
 		}
-		dc.clients[rpcAddr] = client
+		dc.clients[rpcAddr] = c
 	}
-	return client, nil
+	return c, nil
 }
 
 func (dc *DClient) call(ctx context.Context, rpcAddr, serviceMethod string, args, reply interface{}) error {
@@ -62,13 +69,7 @@ func (dc *DClient) call(ctx context.Context, rpcAddr, serviceMethod string, args
 }
 
 func (dc *DClient) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
-	rpcAddr, err := dc.b.Pick()
-	if err != nil {
-		return err
-	}
+	rpcAddr := dc.discovery.GetService()
+	log.Printf("call %s on %s", serviceMethod, rpcAddr)
 	return dc.call(ctx, rpcAddr, serviceMethod, args, reply)
-}
-
-func (dc *DClient) SetBalancer(b Balancer) {
-	dc.b = b
 }
