@@ -36,23 +36,14 @@ func (m *MethodType) newReply() reflect.Value {
 	// reply必须是个指针
 	reply := reflect.New(m.ReplyType.Elem())
 	// 指针通过Elem.Kind()拿到指向元素的类型
-	switch m.ReplyType.Elem().Kind() {
-	case reflect.Slice:
-		// 将指针指向的值设置为空 Slice
-		reply.Elem().Set(reflect.MakeSlice(m.ReplyType.Elem(), 0, 0))
-	case reflect.Map:
-		reply.Elem().Set(reflect.MakeMap(m.ReplyType.Elem()))
-	}
-	return reply
-
-	//var reply reflect.Value
 	//switch m.ReplyType.Elem().Kind() {
-	//case reflect.Map:
-	//	reply = reflect.MakeMap(m.ReplyType.Elem())
 	//case reflect.Slice:
-	//	reply = reflect.MakeSlice(m.ReplyType.Elem(), 0, 0)
+	//	// 将指针指向的值设置为空 Slice
+	//	reply.Elem().Set(reflect.MakeSlice(m.ReplyType.Elem(), 0, 0))
+	//case reflect.Map:
+	//	reply.Elem().Set(reflect.MakeMap(m.ReplyType.Elem()))
 	//}
-	//return reply
+	return reply
 }
 
 type Service struct {
@@ -68,6 +59,7 @@ func newService(rcvr interface{}) *Service {
 	s.typ = reflect.TypeOf(rcvr)                    // 指针指向的类型
 	s.rcvr = reflect.ValueOf(rcvr)                  // 指针指向的值
 	s.name = reflect.Indirect(s.rcvr).Type().Name() // 指针指向的对象的类型名
+
 	// 结构体首字母必须大写
 	if !ast.IsExported(s.name) {
 		log.Fatalf("rpc server: %s is not a valid service name", s.name)
@@ -83,16 +75,25 @@ func (s *Service) registerMethods() {
 	for i := 0; i < s.typ.NumMethod(); i++ {
 		m := s.typ.Method(i)
 		mTyp := m.Type
-		if mTyp.NumIn() != 3 || mTyp.NumOut() != 1 {
+		if mTyp.NumIn() != 2 || mTyp.NumOut() != 1 {
 			// 方法必须是3个参数和1个返回值
 			continue
 		}
 		// error类型指针指向的值
-		if mTyp.Out(0) != reflect.TypeOf((*error)(nil)).Elem() {
-			// 返回值必须是error
-			continue
-		}
-		argType, replyType := mTyp.In(1), mTyp.In(2)
+		//if mTyp.Out(0) != reflect.TypeOf((*error)(nil)).Elem() {
+		//	// 返回值必须是error
+		//	continue
+		//}
+		//interfaceType := reflect.TypeOf((*proto.Message)(nil)).Elem()
+		//if !mTyp.In(1).Implements(interfaceType) {
+		//	continue
+		//}
+		//if !mTyp.Out(0).Implements(interfaceType) {
+		//	// 返回值必须是error
+		//	continue
+		//}
+		argType, replyType := mTyp.In(1), mTyp.Out(0)
+
 		if !isExportedOrBuiltinType(argType) || !isExportedOrBuiltinType(replyType) {
 			// 参数必须是导出类型或者内置类型
 			continue
@@ -106,13 +107,15 @@ func (s *Service) registerMethods() {
 	}
 }
 
-func (s *Service) call(m *MethodType, args, reply reflect.Value) error {
+func (s *Service) call(m *MethodType, args reflect.Value, reply reflect.Value) error {
 	atomic.AddUint64(&m.numsCalls, 1) // 原子性
 	f := m.method.Func
-	returnValues := f.Call([]reflect.Value{s.rcvr, args, reply})
-	if errInter := returnValues[0].Interface(); errInter != nil {
-		return errInter.(error)
-	}
+	//returnValues := f.Call([]reflect.Value{s.rcvr, args, reply})
+	//if errInter := returnValues[0].Interface(); errInter != nil {
+	//	return errInter.(error)
+	//}
+	returnValues := f.Call([]reflect.Value{s.rcvr, args})
+	reply.Elem().Set(returnValues[0].Elem())
 	return nil
 }
 

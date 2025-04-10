@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-// json 编解码器
+// // json 编解码器
 type JsonCodec struct {
 	conn io.ReadWriteCloser // conn
 	buf  *bufio.Writer      // 缓冲区

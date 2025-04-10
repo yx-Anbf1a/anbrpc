@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"myRPC/test_service"
 	"net"
 	"strconv"
 	"sync"
@@ -26,7 +28,7 @@ func (b Boo) Sleep(args Args, reply *int) error {
 }
 
 func startServer(endpoints []string, key string, wg *sync.WaitGroup) {
-	var boo Boo
+	var boo test_service.FBoo
 	l, _ := net.Listen("tcp", ":0")
 	r, _ := NewServiceRegister(endpoints, key, "tcp@"+l.Addr().String(), 20)
 
@@ -38,14 +40,15 @@ func startServer(endpoints []string, key string, wg *sync.WaitGroup) {
 	server.Accept(l)
 }
 
-func foo(xc *DClient, ctx context.Context, serviceMethod string, args *Args) {
-	var reply int
+func foo(xc *DClient, ctx context.Context, serviceMethod string, args *test_service.FBooArgs) {
+	var reply test_service.FBooReply
 	var err error
+
 	err = xc.Call(ctx, serviceMethod, args, &reply)
 	if err != nil {
 		log.Printf("%s error: %v", serviceMethod, err)
 	} else {
-		log.Printf("%s success: %d + %d = %d", serviceMethod, args.Num1, args.Num2, reply)
+		log.Printf("%s success: %d + %d = %v", serviceMethod, args.Num1, args.Num2, reply.Num)
 	}
 }
 
@@ -67,13 +70,15 @@ func call(endpoints []string, prefix string, builder BalancerBuilder) {
 	}()
 	// send request & receive response
 	var wg sync.WaitGroup
-	for i := 0; i < 12; i++ {
+	for i := 0; i < 3; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			foo(xc, context.Background(), "Boo.Sum", &Args{Num1: i, Num2: i * i})
-			time.Sleep(time.Second)
-			foo(xc, context.Background(), "Boo.Sleep", &Args{Num1: i, Num2: i * i})
+			args := test_service.FBooArgs{Num1: int32(i), Num2: int32(i * i)}
+			//foo(xc, context.Background(), "Boo.Sum", &Args{Num1: i, Num2: i * i})
+			foo(xc, context.Background(), "FBoo.Sum", &args)
+			//time.Sleep(time.Second)
+			foo(xc, context.Background(), "FBoo.Sleep", &args)
 		}(i)
 	}
 	wg.Wait()
@@ -112,4 +117,32 @@ func TestRoundRobinBalancerBuild(t *testing.T) {
 	call(endpoints, "/test", NewRoundRobinBalancerBuild())
 	//time.Sleep(time.Second)
 	//call(endpoints, "/test", NewRoundRobinBalancerBuild())
+	//ch := make(chan int)
+	//for i := 0; i < 10; i++ {
+	//	ch <- i
+	//}
+	//go func() {
+	//	for num := range ch {
+	//		log.Println("num:", num)
+	//	}
+	//}()
+}
+
+type Shape interface {
+	Hello()
+}
+
+type Hi struct{}
+
+func (h *Hi) Hello() {
+	fmt.Println("hello")
+}
+
+func HHi(h interface{}) {
+	h.(Shape).Hello()
+}
+
+func TestInterface(t *testing.T) {
+	var h interface{} = &Hi{}
+	HHi(h)
 }

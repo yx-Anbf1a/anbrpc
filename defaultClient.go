@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"google.golang.org/protobuf/proto"
 	"io"
 	"log"
 	"sync"
@@ -60,7 +61,7 @@ func (dc *DClient) dial(rpcAddr string) (*Client, error) {
 	return c, nil
 }
 
-func (dc *DClient) call(ctx context.Context, rpcAddr, serviceMethod string, args, reply interface{}) error {
+func (dc *DClient) call(ctx context.Context, rpcAddr, serviceMethod string, args, reply proto.Message) error {
 	client, err := dc.dial(rpcAddr)
 	if err != nil {
 		return err
@@ -68,7 +69,7 @@ func (dc *DClient) call(ctx context.Context, rpcAddr, serviceMethod string, args
 	return client.Call(ctx, serviceMethod, args, reply)
 }
 
-func (dc *DClient) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
+func (dc *DClient) Call(ctx context.Context, serviceMethod string, args, reply proto.Message) error {
 	rpcAddr := dc.discovery.GetService()
 	log.Printf("call %s on %s", serviceMethod, rpcAddr)
 	return dc.call(ctx, rpcAddr, serviceMethod, args, reply)

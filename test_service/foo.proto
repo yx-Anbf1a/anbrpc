@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package test_service;
+
+option go_package = "./;test_service";
+
+message FBoo {
+  int32 Num1 = 1;
+  int32 Num2 = 2;
+}
+
+message FBooArgs {
+  int32 Num1 = 1;
+  int32 Num2 = 2;
+}
+
+message FBooReply {
+  int32 Num = 1;
+}

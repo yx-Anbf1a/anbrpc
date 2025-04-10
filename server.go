@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"myRPC/codec"
@@ -94,7 +95,7 @@ func (s *Server) ServeCodec(cc codec.Codec, opt *Option) {
 				break
 			}
 			req.h.Error = err.Error()
-			s.sendResponse(cc, req.h, invalidRequest, sending)
+			s.sendResponse(cc, req.h, nil, sending)
 			continue
 		}
 		wg.Add(1)
@@ -127,11 +128,16 @@ func (s *Server) readRequest(cc codec.Codec) (*request, error) {
 	req.argv = req.mtype.newArgs()
 	req.replyv = req.mtype.newReply()
 	// 读取请求内容
-	argvi := req.argv.Interface()
+
 	// 需要用指针取读取内容
+	//if req.argv.Kind() != reflect.Ptr {
+	//	argvi = req.argv.Addr().Interface().(proto.Message)
+	//}
+	// 确保 req.argv 包含的值实现了 proto.Message 接口
 	if req.argv.Kind() != reflect.Ptr {
-		argvi = req.argv.Addr().Interface()
+		return nil, fmt.Errorf("argument type must be a pointer to a struct implementing proto.Message")
 	}
+	argvi := req.argv.Interface()
 	if err = cc.ReadBody(argvi); err != nil {
 		log.Println("read body error:", err)
 		return nil, err
@@ -148,7 +154,6 @@ func (s *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
 		}
 		return nil, err
 	}
-
 	return &h, nil
 }
 
@@ -192,7 +197,7 @@ func (s *Server) handleRequest(cc codec.Codec, req *request, sending *sync.Mutex
 		called <- struct{}{}
 		if err != nil {
 			req.h.Error = err.Error()
-			s.sendResponse(cc, req.h, invalidRequest, sending)
+			s.sendResponse(cc, req.h, nil, sending)
 			sent <- struct{}{}
 			return
 		}
@@ -210,7 +215,7 @@ func (s *Server) handleRequest(cc codec.Codec, req *request, sending *sync.Mutex
 		<-sent
 	case <-time.After(timeout):
 		req.h.Error = "rpc server: request handle timeout"
-		s.sendResponse(cc, req.h, invalidRequest, sending)
+		s.sendResponse(cc, req.h, nil, sending)
 	}
 }
 

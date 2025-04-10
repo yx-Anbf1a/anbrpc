@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"myRPC/test_service"
 	"reflect"
 	"testing"
 )
@@ -24,23 +25,23 @@ func _assert(condition bool, msg string, v ...interface{}) {
 }
 
 func TestNewService(t *testing.T) {
-	var foo Foo
+	var foo test_service.FBoo
 	s := newService(&foo)
-	mtype := s.method["Add"]
+	mtype := s.method["Sum"]
 	if mtype == nil {
 		t.Fatal("can't find method Add")
 	}
 }
 
 func TestMethodType_Calls(t *testing.T) {
-	var foo Foo
+	var foo test_service.FBoo
 	s := newService(&foo)
-	mType := s.method["Add"]
+	mType := s.method["Sum"]
 
 	argv := mType.newArgs()
 	replyv := mType.newReply()
-	argv.Set(reflect.ValueOf(Args{Num1: 1, Num2: 2}))
+	argv.Elem().Set(reflect.ValueOf(test_service.FBooArgs{Num1: 1, Num2: 2}))
 	err := s.call(mType, argv, replyv)
-
-	_assert(err == nil && *replyv.Interface().(*int) == 3 && mType.NumsCalls() == 1, "failed to call Foo.Sum")
+	fmt.Println(replyv.Interface().(*test_service.FBooReply).Num)
+	_assert(err == nil && replyv.Interface().(*test_service.FBooReply).Num == 3 && mType.NumsCalls() == 1, "failed to call Foo.Sum")
 }
