@@ -15,8 +15,10 @@ import (
 type Codec interface {
 	io.Closer // 基础io接口
 	ReadHeader(header *Header) error
-	ReadBody(body interface{}) error
+	ReadBody(body interface{}, n int32) error
 	Write(header *Header, body interface{}) error
+	//Encode(header *Header, body interface{}) error
+	//Decode() (header *Header, body []byte, err error)
 }
 type Type string
 

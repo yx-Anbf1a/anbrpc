@@ -1,8 +1,9 @@
-package main
+package discovery
 
 import (
 	"fmt"
 	"log"
+	balancer2 "myRPC/balancer"
 	"testing"
 	"time"
 )
@@ -10,7 +11,7 @@ import (
 func TestDiscovery(t *testing.T) {
 	// TODO
 	endpoints := []string{"127.0.0.1:2379"}
-	builder := NewRandomBalancerBuild()
+	builder := balancer2.NewRandomBalancerBuild()
 	balancer, _ := builder.Build()
 
 	d := NewServiceDiscovery(endpoints, balancer)

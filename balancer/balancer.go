@@ -1,4 +1,4 @@
-package main
+package balancer
 
 import (
 	"errors"
@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 )
+
+type BalanceMode int
 
 var (
 	ErrNoServer      = errors.New("no server")
@@ -33,7 +35,7 @@ func NewRandomBalancerBuild() *RandomBalancerBuild {
 }
 
 func (b *RandomBalancerBuild) Build() (Balancer, error) {
-	return newRandomBalancer(), nil
+	return NewRandomBalancer(), nil
 }
 
 type RandomBalancer struct {
@@ -41,7 +43,7 @@ type RandomBalancer struct {
 	r  *rand.Rand // generate random number
 }
 
-func newRandomBalancer() *RandomBalancer {
+func NewRandomBalancer() *RandomBalancer {
 	rb := &RandomBalancer{
 		r: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
@@ -64,7 +66,7 @@ func NewRoundRobinBalancerBuild() *RoundRobinBalancerBuild {
 }
 
 func (b *RoundRobinBalancerBuild) Build() (Balancer, error) {
-	return newRoundRobinBalancer(), nil
+	return NewRoundRobinBalancer(), nil
 }
 
 type RoundRobinBalancer struct {
@@ -85,7 +87,7 @@ func (rb *RoundRobinBalancer) Pick(srvKey []string) (string, error) {
 	return srvKey[key], nil
 }
 
-func newRoundRobinBalancer() *RoundRobinBalancer {
+func NewRoundRobinBalancer() *RoundRobinBalancer {
 	rb := &RoundRobinBalancer{
 		index: uint32(rand.Intn(math.MaxInt - 1)),
 	}

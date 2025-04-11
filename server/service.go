@@ -1,8 +1,8 @@
-package main
+package server
 
 import (
+	"go.uber.org/zap"
 	"go/ast"
-	"log"
 	"reflect"
 	"sync/atomic"
 )
@@ -53,6 +53,10 @@ type Service struct {
 	method map[string]*MethodType
 }
 
+func (s *Service) GetMethods() map[string]*MethodType {
+	return s.method
+}
+
 // 传入结构体指针
 func newService(rcvr interface{}) *Service {
 	s := new(Service)
@@ -62,9 +66,10 @@ func newService(rcvr interface{}) *Service {
 
 	// 结构体首字母必须大写
 	if !ast.IsExported(s.name) {
-		log.Fatalf("rpc server: %s is not a valid service name", s.name)
+		//log.Fatalf("rpc server: %s is not a valid service name", s.name)
+		zap.L().Fatal("rpc server: Service Name is not a valid service name", zap.Any("Service Name", s.name))
 	}
-	// 注册方法
+	// 注册方法nAME
 	s.registerMethods()
 	return s
 }
@@ -103,7 +108,8 @@ func (s *Service) registerMethods() {
 			ArgType:   argType,
 			ReplyType: replyType,
 		}
-		log.Printf("rpc server: register %s.%s\n", s.name, m.Name)
+		//log.Printf("rpc server: register %s.%s\n", s.name, m.Name)
+		zap.L().Info("rpc server: register method", zap.Any("service", s.name), zap.Any("method", m.Name))
 	}
 }
 

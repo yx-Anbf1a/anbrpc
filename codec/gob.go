@@ -33,7 +33,7 @@ func (c *GobCodec) ReadHeader(header *Header) error {
 	return c.dec.Decode(header)
 }
 
-func (c *GobCodec) ReadBody(body interface{}) error {
+func (c *GobCodec) ReadBody(body interface{}, n int32) error {
 	return c.dec.Decode(body)
 }
 

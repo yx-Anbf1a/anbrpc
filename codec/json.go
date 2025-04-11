@@ -33,7 +33,7 @@ func (c *JsonCodec) ReadHeader(header *Header) error {
 	return c.dec.Decode(header)
 }
 
-func (c *JsonCodec) ReadBody(body interface{}) error {
+func (c *JsonCodec) ReadBody(body interface{}, n int32) error {
 	return c.dec.Decode(body)
 }
 

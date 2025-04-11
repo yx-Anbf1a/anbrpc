@@ -8,5 +8,5 @@ message Header{
   string ServiceMethod= 1;// 服务名和方法名
   uint64 Seq = 2; // 请求的序列号
   string Error = 3; // 错误信息
-  int64 BodySize = 4; // 消息长度
+  int32 BodySize = 4; // 消息长度
 }

@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"bufio"
@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"myRPC/codec"
+	"myRPC/option"
 	"net"
 	"net/http"
 	"strings"
@@ -31,7 +32,7 @@ func (call *Call) done() {
 
 type Client struct {
 	cc       codec.Codec // 客户端编解码器
-	opt      *Option
+	opt      *option.Option
 	sending  sync.Mutex       // 保证请求并发安全
 	header   codec.Header     // 请求头
 	mu       sync.Mutex       // 自己并发操作安全
@@ -101,23 +102,28 @@ func (c *Client) TerminateCalls(err error) {
 }
 
 func (c *Client) receive() {
+
+	//errChan := make(chan error, 1)
 	var err error
+	//timeoutChan := make(chan struct{}, 1)
+
 	for err == nil {
 		var h codec.Header
 		if err = c.cc.ReadHeader(&h); err != nil {
+			//errChan <- err
 			break
 		}
 		call := c.RemoveCall(h.Seq)
 		switch {
 		case call == nil:
-			err = c.cc.ReadBody(nil)
+			err = c.cc.ReadBody(nil, h.BodySize)
 		case h.Error != "":
 			call.Error = errors.New(h.Error)
-			err = c.cc.ReadBody(nil)
+			err = c.cc.ReadBody(nil, h.BodySize)
 			call.done()
 		default:
 			// 正常就读取请求，标记完成
-			err = c.cc.ReadBody(call.Reply)
+			err = c.cc.ReadBody(call.Reply, h.BodySize)
 			if err != nil {
 				call.Error = errors.New("reading body " + err.Error())
 			}
@@ -181,10 +187,10 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply int
 	}
 }
 
-type newClientFunc func(conn net.Conn, opt *Option) (*Client, error)
+type newClientFunc func(conn net.Conn, opt *option.Option) (*Client, error)
 
-func dial(f newClientFunc, network, address string, opts ...*Option) (client *Client, err error) {
-	opt, err := ParseOption(opts...)
+func dial(f newClientFunc, network, address string, opts ...*option.Option) (client *Client, err error) {
+	opt, err := option.ParseOption(opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +223,7 @@ func dial(f newClientFunc, network, address string, opts ...*Option) (client *Cl
 	}
 }
 
-func NewClient(conn net.Conn, opt *Option) (*Client, error) {
+func NewClient(conn net.Conn, opt *option.Option) (*Client, error) {
 	f := codec.NewCodecFuncMap[opt.CodecType]
 	if f == nil {
 		err := errors.New("invalid codec type")
@@ -233,7 +239,7 @@ func NewClient(conn net.Conn, opt *Option) (*Client, error) {
 	return newClientCodec(f(conn), opt)
 }
 
-func newClientCodec(cc codec.Codec, opt *Option) (*Client, error) {
+func newClientCodec(cc codec.Codec, opt *option.Option) (*Client, error) {
 	// 发送请求设置
 	client := &Client{
 		seq:     1,
@@ -246,13 +252,13 @@ func newClientCodec(cc codec.Codec, opt *Option) (*Client, error) {
 	return client, nil
 }
 
-func NewHTTPClient(conn net.Conn, opt *Option) (*Client, error) {
-	_, _ = io.WriteString(conn, fmt.Sprintf("CONNECT %s HTTP/2.0\n\n", defaultRPCPath))
+func NewHTTPClient(conn net.Conn, opt *option.Option) (*Client, error) {
+	_, _ = io.WriteString(conn, fmt.Sprintf("CONNECT %s HTTP/2.0\n\n", option.DefaultRPCPath))
 
 	// Require successful HTTP response
 	// before switching to RPC protocol.
 	resp, err := http.ReadResponse(bufio.NewReader(conn), &http.Request{Method: "CONNECT"})
-	if err == nil && resp.Status == connected {
+	if err == nil && resp.Status == option.Connected {
 		return NewClient(conn, opt)
 	}
 	if err == nil {
@@ -261,15 +267,15 @@ func NewHTTPClient(conn net.Conn, opt *Option) (*Client, error) {
 	return nil, err
 }
 
-func DialHTTP(network, address string, opts ...*Option) (*Client, error) {
+func DialHTTP(network, address string, opts ...*option.Option) (*Client, error) {
 	return dial(NewHTTPClient, network, address, opts...)
 }
 
-func Dial(network, address string, opts ...*Option) (client *Client, err error) {
+func Dial(network, address string, opts ...*option.Option) (client *Client, err error) {
 	return dial(NewClient, network, address, opts...)
 }
 
-func DDial(rpcAddr string, opts ...*Option) (*Client, error) {
+func DDial(rpcAddr string, opts ...*option.Option) (*Client, error) {
 	parts := strings.Split(rpcAddr, "@")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("rpc client err: wrong format '%s', expect protocol@addr", rpcAddr)

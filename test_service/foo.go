@@ -15,7 +15,7 @@ func (fb *FBoo) Sum(args *FBooArgs) (reply *FBooReply) {
 	return
 }
 func (fb *FBoo) Sleep(args *FBooArgs) (reply *FBooReply) {
-	time.Sleep(time.Second * time.Duration(args.Num1))
+	time.Sleep(time.Second)
 	reply = new(FBooReply)
 	reply.Num = args.Num1 + args.Num2
 	return

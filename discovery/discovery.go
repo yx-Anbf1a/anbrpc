@@ -1,22 +1,21 @@
-package main
+package discovery
 
 import (
 	"context"
 	"github.com/coreos/etcd/mvcc/mvccpb"
 	"go.etcd.io/etcd/clientv3"
-	"log"
+	"go.uber.org/zap"
+	bl "myRPC/balancer"
 	"sync"
 	"time"
 )
-
-type BalanceMode int
 
 type Discovery interface {
 	Refresh() error                         // 从注册中心更新服务列表
 	Update(servers map[string]string) error // 手动更新
 	GetService() string                     // 根据负载均衡策略，选择一个服务实例
 	GetAllService() []string
-	SetBalancer(balancer Balancer)
+	SetBalancer(balancer bl.Balancer)
 	WatchService(prefix string) error
 	Close() error
 }
@@ -25,7 +24,7 @@ type ServerDiscovery struct {
 	// 服务列表
 	servers map[string]string
 	// 负载均衡策略
-	mode BalanceMode
+	mode bl.BalanceMode
 	// 上次选择的服务实例
 	lastIndex int
 	// etcd 客户端
@@ -33,21 +32,22 @@ type ServerDiscovery struct {
 	// 保证并发安全
 	mu sync.Mutex
 	// 负载均衡器
-	balancer Balancer
+	balancer bl.Balancer
 }
 
 // NewServiceDiscovery  新建发现服务
-func NewServiceDiscovery(endpoints []string, balancer ...Balancer) *ServerDiscovery {
+func NewServiceDiscovery(endpoints []string, balancer ...bl.Balancer) *ServerDiscovery {
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
+		zap.L().Fatal("", zap.Error(err))
 	}
-	var b Balancer
+	var b bl.Balancer
 	if balancer == nil || len(balancer) == 0 {
-		b = newRoundRobinBalancer()
+		b = bl.NewRoundRobinBalancer()
 	} else {
 		b = balancer[0]
 	}
@@ -61,7 +61,7 @@ func NewServiceDiscovery(endpoints []string, balancer ...Balancer) *ServerDiscov
 // watcher 监听前缀
 func (s *ServerDiscovery) watcher(prefix string) {
 	rch := s.cli.Watch(context.Background(), prefix, clientv3.WithPrefix())
-	log.Printf("watching prefix:%s now...", prefix)
+	//log.Printf("watching prefix:%s now...", prefix)
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
 			switch ev.Type {
@@ -94,7 +94,7 @@ func (s *ServerDiscovery) SetServices(key, val string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.servers[key] = val
-	log.Println("put key :", key, "val:", val)
+	//log.Println("put key :", key, "val:", val)
 }
 
 func (s *ServerDiscovery) Refresh() error {
@@ -115,7 +115,7 @@ func (s *ServerDiscovery) DelServiceList(key string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	delete(s.servers, key)
-	log.Println("del key:", key)
+	//log.Println("del key:", key)
 }
 
 // GetServices 获取服务地址
@@ -140,7 +140,7 @@ func (s *ServerDiscovery) GetAllService() []string {
 	return addrs
 }
 
-func (s *ServerDiscovery) SetBalancer(balancer Balancer) {
+func (s *ServerDiscovery) SetBalancer(balancer bl.Balancer) {
 	s.balancer = balancer
 }
 

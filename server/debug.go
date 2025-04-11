@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ const debugText = `<html>
 	<title>GeeRPC Services</title>
 	{{range .}}
 	<hr>
-	Service {{.Name}}
+	Service {{.ServiceName}}
 	<hr>
 		<table>
 		<th align=center>Method</th><th align=center>Calls</th>
@@ -41,11 +41,11 @@ type debugService struct {
 func (server debugHTTP) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// Build a sorted version of the data.
 	var services []debugService
-	server.ServerMap.Range(func(namei, svci interface{}) bool {
+	server.ServiceMap.Range(func(namei, svci interface{}) bool {
 		svc := svci.(*Service)
 		services = append(services, debugService{
 			Name:   namei.(string),
-			Method: svc.method,
+			Method: svc.GetMethods(),
 		})
 		return true
 	})

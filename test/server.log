@@ -1,0 +1,149 @@
+{"level":"INFO","time":"2025-04-11T20:28:20.033+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:28:20.042+0800","caller":"server/server.go:302","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:32:39.567+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:32:39.567+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:32:39.567+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:32:39.576+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:32:39.576+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:32:39.576+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:36:33.466+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:36:33.466+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:36:33.466+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:36:33.474+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:36:33.474+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:36:33.474+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:37:03.769+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:37:03.769+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:37:03.769+0800","caller":"logger/logger.go:39","msg":"logger init success !"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sleep"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sleep"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sum"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sum"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sleep"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/service.go:112","msg":"rpc server: register method","service":"FBoo","method":"Sum"}
+{"level":"INFO","time":"2025-04-11T20:37:03.777+0800","caller":"server/server.go:303","msg":"register service success","service":"FBoo"}
+{"level":"INFO","time":"2025-04-11T20:37:29.887+0800","caller":"server/server.go:53","msg":"server run !"}
+{"level":"INFO","time":"2025-04-11T20:37:29.947+0800","caller":"server/server.go:78","msg":"start serve a conn","RemoteAddr":"127.0.0.1:53252"}
+{"level":"INFO","time":"2025-04-11T20:37:29.947+0800","caller":"server/server.go:99","msg":"receive option success","option":{"MagicNumber":3927827,"CodecType":"proto","ConnectTimeOut":10000000000,"HandleTimeOut":10000000000}}
+{"level":"INFO","time":"2025-04-11T20:37:29.948+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:30.147+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:30.362+0800","caller":"server/server.go:53","msg":"server run !"}
+{"level":"INFO","time":"2025-04-11T20:37:30.388+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1022 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:30.862+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1022 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:30.999+0800","caller":"server/server.go:53","msg":"server run !"}
+{"level":"INFO","time":"2025-04-11T20:37:31.499+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:32.494+0800","caller":"server/server.go:78","msg":"start serve a conn","RemoteAddr":"127.0.0.1:53264"}
+{"level":"INFO","time":"2025-04-11T20:37:32.494+0800","caller":"server/server.go:99","msg":"receive option success","option":{"MagicNumber":3927827,"CodecType":"proto","ConnectTimeOut":10000000000,"HandleTimeOut":10000000000}}
+{"level":"INFO","time":"2025-04-11T20:37:32.495+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.502+0800","caller":"server/server.go:78","msg":"start serve a conn","RemoteAddr":"127.0.0.1:53265"}
+{"level":"INFO","time":"2025-04-11T20:37:32.502+0800","caller":"server/server.go:99","msg":"receive option success","option":{"MagicNumber":3927827,"CodecType":"proto","ConnectTimeOut":10000000000,"HandleTimeOut":10000000000}}
+{"level":"INFO","time":"2025-04-11T20:37:32.502+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.594+0800","caller":"server/server.go:78","msg":"start serve a conn","RemoteAddr":"127.0.0.1:53266"}
+{"level":"INFO","time":"2025-04-11T20:37:32.595+0800","caller":"server/server.go:99","msg":"receive option success","option":{"MagicNumber":3927827,"CodecType":"proto","ConnectTimeOut":10000000000,"HandleTimeOut":10000000000}}
+{"level":"INFO","time":"2025-04-11T20:37:32.695+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.695+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.795+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.795+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.896+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.896+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.996+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:32.996+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.097+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.097+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.197+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.197+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.297+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.297+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.398+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.398+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.498+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.499+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.599+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.600+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.699+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.699+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.800+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.800+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.900+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:33.900+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.001+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.001+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.101+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.101+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.202+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.202+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.302+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.302+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.403+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.403+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.503+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.503+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.604+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.604+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.705+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.705+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.805+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.805+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.905+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:34.905+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.005+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.005+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.106+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.106+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.207+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.207+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.307+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.307+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.407+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.407+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.508+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.508+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.595+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.608+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.608+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.708+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.708+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.808+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.808+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.908+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:35.908+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.008+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.008+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.109+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.109+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.209+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.209+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.310+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.310+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.410+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.410+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.510+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.510+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.611+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.611+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.711+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.711+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.811+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.811+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.912+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:36.912+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.013+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.013+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.113+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.113+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.213+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.213+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.314+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.314+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.392+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:37.414+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.414+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.514+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.514+0800","caller":"server/server.go:252","msg":"start handleRequest"}
+{"level":"INFO","time":"2025-04-11T20:37:37.867+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:38.505+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:44.396+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:44.872+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}
+{"level":"INFO","time":"2025-04-11T20:37:45.509+0800","caller":"server/registery.go:86","msg":"续约成功","leaseKeepResp":"cluster_id:14841639068965178418 member_id:10276657743932975437 revision:1023 raft_term:14 "}

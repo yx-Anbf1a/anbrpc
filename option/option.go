@@ -1,9 +1,15 @@
-package main
+package option
 
 import (
 	"errors"
 	"myRPC/codec"
 	"time"
+)
+
+const (
+	Connected        = "200 Connected to Gee RPC"
+	DefaultRPCPath   = "/_geeprc_"
+	DefaultDebugPath = "/debug/geerpc"
 )
 
 type Option struct {
@@ -15,7 +21,7 @@ type Option struct {
 
 var DefaultOption = &Option{
 	MagicNumber:    0x3bef13,
-	CodecType:      codec.JsonType,
+	CodecType:      codec.ProtoTyp,
 	ConnectTimeOut: time.Second * 10,
 	HandleTimeOut:  time.Second * 10,
 }
