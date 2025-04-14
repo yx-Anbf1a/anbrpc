@@ -12,7 +12,6 @@ import (
 	"myRPC/option"
 	"net"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 )
@@ -189,15 +188,18 @@ func (c *Client) Call(ctx context.Context, serviceMethod string, args, reply int
 
 type newClientFunc func(conn net.Conn, opt *option.Option) (*Client, error)
 
-func dial(f newClientFunc, network, address string, opts ...*option.Option) (client *Client, err error) {
+func dial(f newClientFunc, conn net.Conn, opts ...*option.Option) (client *Client, err error) {
 	opt, err := option.ParseOption(opts...)
 	if err != nil {
 		return nil, err
 	}
-	conn, err := net.DialTimeout(network, address, opt.ConnectTimeOut)
-	if err != nil {
-		return nil, err
-	}
+
+	// 连接池...
+	//conn, err := net.DialTimeout(network, address, opt.ConnectTimeOut)
+	//
+	//if err != nil {
+	//	return nil, err
+	//}
 	defer func() {
 		if err != nil && conn != nil {
 			_ = conn.Close()
@@ -267,25 +269,21 @@ func NewHTTPClient(conn net.Conn, opt *option.Option) (*Client, error) {
 	return nil, err
 }
 
-func DialHTTP(network, address string, opts ...*option.Option) (*Client, error) {
-	return dial(NewHTTPClient, network, address, opts...)
+func DialHTTP(conn net.Conn, opts ...*option.Option) (*Client, error) {
+	return dial(NewHTTPClient, conn, opts...)
 }
 
-func Dial(network, address string, opts ...*option.Option) (client *Client, err error) {
-	return dial(NewClient, network, address, opts...)
+func Dial(conn net.Conn, opts ...*option.Option) (client *Client, err error) {
+	return dial(NewClient, conn, opts...)
 }
 
-func DDial(rpcAddr string, opts ...*option.Option) (*Client, error) {
-	parts := strings.Split(rpcAddr, "@")
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("rpc client err: wrong format '%s', expect protocol@addr", rpcAddr)
-	}
-	protocol, addr := parts[0], parts[1]
+func DDial(protocol string, conn net.Conn, opts ...*option.Option) (*Client, error) {
+
 	switch protocol {
 	case "http":
-		return DialHTTP("tcp", addr, opts...)
+		return DialHTTP(conn, opts...)
 	default:
 		// tcp, unix or other transport protocol
-		return Dial(protocol, addr, opts...)
+		return Dial(conn, opts...)
 	}
 }

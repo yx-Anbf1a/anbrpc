@@ -3,11 +3,14 @@ package client
 import (
 	"context"
 	"errors"
+	"fmt"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"myRPC/balancer"
 	"myRPC/discovery"
 	"myRPC/option"
+	"net"
+	"strings"
 	"sync"
 	"time"
 )
@@ -15,11 +18,20 @@ import (
 type DClient struct {
 	discovery discovery.Discovery
 	opt       *option.Option
+
 	mu        sync.Mutex
 	clients   map[string]*Client
-	services  map[string][]string // 存储服务地址
 	endpoints []string
 	bl        balancer.Balancer
+
+	pools map[string]Pool
+
+	InitialCap int
+	//最大并发存活连接数
+	MaxCap int
+	//最大空闲连接
+	MaxIdle     int
+	IdleTimeout time.Duration
 }
 
 var _ io.Closer = (*DClient)(nil)
@@ -31,6 +43,9 @@ func (dc *DClient) Close() error {
 		_ = client.Close()
 	}
 	_ = dc.discovery.Close()
+	for _, pool := range dc.pools {
+		pool.Release()
+	}
 	return nil
 }
 
@@ -42,9 +57,14 @@ func NewDClient(endpoints []string, opt ...*option.Option) *DClient {
 		op = opt[0]
 	}
 	dc := &DClient{
-		endpoints: endpoints,
-		opt:       op,
-		clients:   make(map[string]*Client),
+		endpoints:   endpoints,
+		opt:         op,
+		clients:     make(map[string]*Client),
+		pools:       make(map[string]Pool),
+		InitialCap:  2,
+		MaxCap:      5,
+		MaxIdle:     4,
+		IdleTimeout: 15 * time.Second,
 	}
 	dc.bl = balancer.NewRandomBalancer()
 	dc.newDiscovery(dc.endpoints, dc.bl)
@@ -77,7 +97,33 @@ func (dc *DClient) dial(rpcAddr string) (*Client, error) {
 	}
 	if c == nil {
 		var err error
-		c, err = DDial(rpcAddr, dc.opt)
+		parts := strings.Split(rpcAddr, "@")
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("rpc client err: wrong format '%s', expect protocol@addr", rpcAddr)
+		}
+		protocol, addr := parts[0], parts[1]
+
+		pool, ok := dc.pools[rpcAddr]
+		if !ok {
+			poolOpt := PoolOption{
+				InitialCap:  dc.InitialCap,
+				MaxIdle:     dc.MaxIdle,
+				MaxCap:      dc.MaxCap,
+				IdleTimeout: dc.IdleTimeout,
+				Network:     protocol,
+				Address:     addr,
+			}
+			pool, _ = NewChannelPool(&poolOpt)
+			dc.pools[rpcAddr] = pool
+		}
+
+		conn, err := pool.Get()
+		if err != nil {
+			return nil, err
+		}
+		c, err = DDial(protocol, conn.(net.Conn), dc.opt)
+		_ = pool.Put(conn)
+
 		if err != nil {
 			return nil, err
 		}
