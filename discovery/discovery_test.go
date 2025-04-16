@@ -2,7 +2,7 @@ package discovery
 
 import (
 	"fmt"
-	balancer2 "github.com/yx-Anbf1a/anbrpcv/balancer"
+	balancer2 "github.com/yx-Anbf1a/anbrpc/balancer"
 	"log"
 	"testing"
 	"time"

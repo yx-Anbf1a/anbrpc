@@ -1,4 +1,4 @@
-module github.com/yx-Anbf1a/anbrpcv
+module github.com/yx-Anbf1a/anbrpc
 
 go 1.24.0
 
