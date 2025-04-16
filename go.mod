@@ -1,4 +1,4 @@
-module myRPC
+module github.com/yx-Anbf1a/myRPC
 
 go 1.24.0
 
