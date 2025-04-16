@@ -2,10 +2,10 @@ package test
 
 import (
 	"context"
-	bl "github.com/yx-Anbf1a/anbrpc/balancer"
-	"github.com/yx-Anbf1a/anbrpc/client"
-	"github.com/yx-Anbf1a/anbrpc/server"
-	"github.com/yx-Anbf1a/anbrpc/test_service"
+	bl "github.com/yx-Anbf1a/anbrpcv/balancer"
+	"github.com/yx-Anbf1a/anbrpcv/client"
+	"github.com/yx-Anbf1a/anbrpcv/server"
+	"github.com/yx-Anbf1a/anbrpcv/test_service"
 	"log"
 	_ "net/http/pprof"
 	"strconv"

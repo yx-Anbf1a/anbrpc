@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/yx-Anbf1a/anbrpc/test_service"
+	"github.com/yx-Anbf1a/anbrpcv/test_service"
 	"reflect"
 	"testing"
 )
