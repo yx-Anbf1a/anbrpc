@@ -3,9 +3,9 @@ package discovery
 import (
 	"context"
 	"github.com/coreos/etcd/mvcc/mvccpb"
+	bl "github.com/yx-Anbf1a/myRPC/balancer"
 	"go.etcd.io/etcd/clientv3"
 	"go.uber.org/zap"
-	bl "myRPC/balancer"
 	"sync"
 	"time"
 )

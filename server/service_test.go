@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"myRPC/test_service"
+	"github.com/yx-Anbf1a/myRPC/test_service"
 	"reflect"
 	"testing"
 )

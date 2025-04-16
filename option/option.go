@@ -2,7 +2,7 @@ package option
 
 import (
 	"errors"
-	"myRPC/codec"
+	"github.com/yx-Anbf1a/myRPC/codec"
 	"time"
 )
 

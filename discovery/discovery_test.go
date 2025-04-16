@@ -2,8 +2,8 @@ package discovery
 
 import (
 	"fmt"
+	balancer2 "github.com/yx-Anbf1a/myRPC/balancer"
 	"log"
-	balancer2 "myRPC/balancer"
 	"testing"
 	"time"
 )

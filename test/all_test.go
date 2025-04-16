@@ -2,11 +2,11 @@ package test
 
 import (
 	"context"
+	bl "github.com/yx-Anbf1a/myRPC/balancer"
+	"github.com/yx-Anbf1a/myRPC/client"
+	"github.com/yx-Anbf1a/myRPC/server"
+	"github.com/yx-Anbf1a/myRPC/test_service"
 	"log"
-	bl "myRPC/balancer"
-	"myRPC/client"
-	"myRPC/server"
-	"myRPC/test_service"
 	_ "net/http/pprof"
 	"strconv"
 	"sync"
